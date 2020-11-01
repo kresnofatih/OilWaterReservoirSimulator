@@ -6,7 +6,7 @@ P3d = np.zeros((10,10), dtype=float)
 for i in range(0, 10):
     for j in range(0, 10):
         if (j>=i-3 and j<=i+3):
-            P3d[i][j] = rdm.randint(1, 9)
+            P3d[i][j] = rdm.randint(1, 7)
 print(P3d)
 
 def createTransit(matrix, bandWidth):
@@ -25,7 +25,7 @@ def createTransit(matrix, bandWidth):
                 ac.append(0)
         ab.append(ac)
     ab = np.array(ab)
-    # print(ab)
+    print(ab)
     return ab
 
 createTransit(P3d, 3)
