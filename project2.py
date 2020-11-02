@@ -1004,8 +1004,8 @@ while t<tmax:
     aCUMINJ.append(cum_watinj)
     aCUMOPROD.append(cum_oilprod)
     aCUMWPROD.append(cum_watprod)
-    aPWBINJ.append(Pg3d[0][0][3])
-    aPWBPROD.append(Pg3d[4][4][0])
+    aPWBINJ.append(Pg3d[0][0][4])
+    aPWBPROD.append(Pg3d[4][4][4])
     aMB_ERR_OIL.append(mbeo)
     aMB_ERR_WAT.append(mbew)
 
