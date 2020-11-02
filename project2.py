@@ -1,3 +1,7 @@
+# Oil-Water Reservoir Simulator
+# Name  :   Kresno Fatih Imani
+# NIM   :   12216009
+
 import numpy as np
 # import matplotlib.pyplot as plt
 from scipy.linalg import lu_solve, lu_factor
@@ -58,7 +62,6 @@ def readpvt():
         Cw = temp[2]
         Muw_ref = temp[3]
         Vscw = temp[4]
-        # print(Vscw)
     return
 
 def interpolate(tabx, taby, x):
@@ -1044,3 +1047,5 @@ with open("resultsim2.txt", "w+") as ww:
         ww.write(str(aMB_ERR_OIL[x])+ " ")
         ww.write(str(aMB_ERR_WAT[x])+ " ")
         ww.write("\n")
+
+print("Simulation Run Completed")
