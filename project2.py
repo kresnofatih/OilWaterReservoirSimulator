@@ -5,26 +5,7 @@
 import numpy as np
 # import matplotlib.pyplot as plt
 from scipy.linalg import lu_solve, lu_factor
-# from scipy.linalg import solve_banded
-
-def createTransit(matrix, bandWidth):
-    ab = []
-    for i in range(bandWidth, -bandWidth-1, -1):
-        ac = []
-        if i>=0:
-            for j in range(0, i):
-                ac.append(0)
-            for j in range(0, len(np.diagonal(matrix, i))):
-                ac.append(np.diagonal(matrix, i)[j])
-        else:
-            for j in range(0, len(np.diagonal(matrix, i))):
-                ac.append(np.diagonal(matrix, i)[j])
-            for j in range(i, 0):
-                ac.append(0)
-        ab.append(ac)
-    ab = np.array(ab)
-    # print(ab)
-    return ab
+# from scipy.linalg import solve
 
 def readpvt():
     global npvto, Rs, Pfl, Bo, Muo, Pw_ref, Bw_ref, Cw, Muw_ref, Vscw
@@ -63,75 +44,6 @@ def readpvt():
         Muw_ref = temp[3]
         Vscw = temp[4]
     return
-
-def interpolate(tabx, taby, x):
-    i = 0
-    if (x<tabx[i]):
-        y = taby[i]
-    elif (x>tabx[-1]):
-        y = taby[-1]
-    else:
-        x1 = tabx[i]
-        x2 = tabx[i+1]
-        y1 = taby[i]
-        y2 = taby[i+1]
-        while(x>tabx[i+1]):
-            i += 1
-            x1 = tabx[i]
-            x2 = tabx[i + 1]
-            y1 = taby[i]
-            y2 = taby[i + 1]
-        y = y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
-    return y
-
-def fBo(p):
-    y = interpolate(Pfl, Bo, p)
-    return y
-def fMuo(p):
-    y = interpolate(Pfl, Muo, p)
-    return y
-def fRs(p):
-    y = interpolate(Pfl, Rs, p)*1000/5.6146
-    return y
-def fBw(p):
-    x = Cw*(p-Pw_ref)
-    y = Bw_ref/(1+x+(x*x/2))
-    return y
-def fMuw(p):
-    x = -Cw*(p-Pw_ref)
-    y = Muw_ref/(1+x+(x*x/2))
-    return y
-
-def fdBo(p):
-    y1 = fBo(p)
-    p2 = p-0.001
-    y2 = fBo(p2)
-    dydx = (y1-y2)/(p-p2)
-    return dydx
-def fdMuo(p):
-    y1 = fMuo(p)
-    p2 = p-0.001
-    y2 = fMuo(p2)
-    dydx = (y1-y2)/(p-p2)
-    return dydx
-def fdBw(p):
-    y1 = fBw(p)
-    p2 = p-0.001
-    y2 = fBw(p2)
-    dydx = (y1-y2)/(p-p2)
-    return dydx
-def fdMuw(p):
-    y1 = fMuw(p)
-    p2 = p-0.001
-    y2 = fMuw(p2)
-    dydx = (y1-y2)/(p-p2)
-    return dydx
-def fdRs(p):
-    y1 = fRs(p)
-    p2 = p-0.001
-    y2 = fRs(p2)
-    dydx = (y1-y2)/(p-p2)
-    return dydx
 
 def readSim():
     global Ngx, Ngy, Ngz, Dx, Dy, Dz, Pi, Swi
@@ -278,6 +190,77 @@ def readSim():
                 # print(wr[i][j][0], wr[i][j][1])
 
         return
+
+def interpolate(tabx, taby, x):
+    i = 0
+    if (x<tabx[i]):
+        y = taby[i]
+    elif (x>tabx[-1]):
+        y = taby[-1]
+    else:
+        x1 = tabx[i]
+        x2 = tabx[i+1]
+        y1 = taby[i]
+        y2 = taby[i+1]
+        while(x>tabx[i+1]):
+            i += 1
+            x1 = tabx[i]
+            x2 = tabx[i + 1]
+            y1 = taby[i]
+            y2 = taby[i + 1]
+        y = y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
+    return y
+
+def fBo(p):
+    y = interpolate(Pfl, Bo, p)
+    return y
+def fMuo(p):
+    y = interpolate(Pfl, Muo, p)
+    return y
+def fRs(p):
+    y = interpolate(Pfl, Rs, p)*1000/5.6146
+    return y
+def fBw(p):
+    x = Cw*(p-Pw_ref)
+    y = Bw_ref/(1+x+(x*x/2))
+    return y
+def fMuw(p):
+    x = -Cw*(p-Pw_ref)
+    y = Muw_ref/(1+x+(x*x/2))
+    return y
+
+def fdBo(p):
+    y1 = fBo(p)
+    p2 = p-0.001
+    y2 = fBo(p2)
+    dydx = (y1-y2)/(p-p2)
+    return dydx
+def fdMuo(p):
+    y1 = fMuo(p)
+    p2 = p-0.001
+    y2 = fMuo(p2)
+    dydx = (y1-y2)/(p-p2)
+    return dydx
+def fdBw(p):
+    y1 = fBw(p)
+    p2 = p-0.001
+    y2 = fBw(p2)
+    dydx = (y1-y2)/(p-p2)
+    return dydx
+def fdMuw(p):
+    y1 = fMuw(p)
+    p2 = p-0.001
+    y2 = fMuw(p2)
+    dydx = (y1-y2)/(p-p2)
+    return dydx
+def fdRs(p):
+    y1 = fRs(p)
+    p2 = p-0.001
+    y2 = fRs(p2)
+    dydx = (y1-y2)/(p-p2)
+    return dydx
+
+
 
 def fBg(p):
     y = interpolate(Pg, Bg, p)*1000*5.6146
@@ -883,7 +866,7 @@ dSLIM = 0.02
 dPLIM = 50
 
 t = 0
-dt = 0.1
+dt = 2
 tmax = 2000
 cum_oilprod = 0
 cum_watprod = 0
@@ -927,8 +910,6 @@ while t<tmax:
         print("")
 
         print("Subprogram:gauss/running")
-        # ab = createTransit(jm, 50)
-        # sol = solve_banded((50, 50), ab, jmm)
         # sol = solve(jm, jmm)
         lu, piv = lu_factor(jm)
         sol = lu_solve((lu, piv), jmm)
@@ -958,10 +939,6 @@ while t<tmax:
         x_dp_max = np.amax(abs(x_dp))
         fo_max = np.amax(abs(Fo))
         fw_max = np.amax(abs(Fw))
-        # x_dsw_max = abs(np.amax(x_dsw))
-        # x_dp_max = abs(np.amax(x_dp))
-        # fo_max = abs(np.amax(Fo))
-        # fw_max = abs(np.amax(Fw))
 
         # if(x_dp_max<E_p and x_dsw_max<E_s):
         #     c = 1
@@ -984,12 +961,16 @@ while t<tmax:
         if qw[i]>0:
             Qw = qw[i]
             Qo = qo[i]
-            cum_watprod += Qw*dt/5.6146
-            cum_oilprod += Qo*dt/5.6146
+            cum_watprod += Qw*dt
+            # cum_watprod += Qw*dt/5.6146
+            cum_oilprod += Qo*dt
+            # cum_oilprod += Qo*dt/5.6146
         if qw[i]<0:
             Qi = abs(qw[i])
-            cum_watinj += abs(qw[i])*dt/5.6146
-            cum_oilinj += abs(qo[i])*dt/5.6146
+            cum_watinj += abs(qw[i])*dt
+            # cum_watinj += abs(qw[i])*dt/5.6146
+            cum_oilinj += abs(qo[i])*dt
+            # cum_oilinj += abs(qo[i])*dt/5.6146
 
     mbew = (owip-rwip-cum_watprod+cum_watinj)/owip
     mbeo = (ooip-roip-cum_oilprod+cum_oilinj)/owip
@@ -999,14 +980,14 @@ while t<tmax:
 
     aTIME.append(t)
     aDT.append(dt)
-    aWATINJ.append(Qi/5.6146)
-    aOILPROD.append(Qo/5.6146)
-    aWATPROD.append(Qw/5.6146)
+    aWATINJ.append(Qi)
+    aOILPROD.append(Qo)
+    aWATPROD.append(Qw)
     aWC.append(watcut)
     aWOR.append(wor)
-    aCUMINJ.append(cum_watinj)
-    aCUMOPROD.append(cum_oilprod)
-    aCUMWPROD.append(cum_watprod)
+    aCUMINJ.append(cum_watinj/1000)
+    aCUMOPROD.append(cum_oilprod/1000)
+    aCUMWPROD.append(cum_watprod/1000)
     aPWBINJ.append(Pg3d[0][0][4])
     aPWBPROD.append(Pg3d[4][4][4])
     aMB_ERR_OIL.append(mbeo)

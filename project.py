@@ -10,7 +10,7 @@ def readpvt():
             rd.readline()
         
         npvto = int(rd.readline())
-        # print(npvto)
+        print(npvto)
 
         for i in range(0, 4):
             rd.readline()
@@ -27,7 +27,7 @@ def readpvt():
             Pfl[i] = temp[1]
             Bo[i] = temp[2]
             Muo[i] = temp[3]
-            # print(Rs[i], Pfl[i], Bo[i], Muo[i])
+            print(Rs[i], Pfl[i], Bo[i], Muo[i])
         
         for i in range(0, 4):
             rd.readline()
@@ -39,8 +39,152 @@ def readpvt():
         Cw = temp[2]
         Muw_ref = temp[3]
         Vscw = temp[4]
-        # print(Vscw)
+        print(Vscw)
     return
+
+def readSim():
+    global Ngx, Ngy, Ngz, Dx, Dy, Dz, Pi, Swi
+    global phi_ref, cr, p_ref, kx, ky, kz, nrock
+    global Sw, Krw, Kro, Pcow, ros, rgs, rws, Pg, Bg, Mug
+    with open("datasim.txt", "r") as rr:
+        for i in range(0, 5):
+            rr.readline()
+        
+        line = rr.readline()
+        temp = np.array(line.split(), dtype=int)
+        Ngx = temp[0]
+        Ngy = temp[1]
+        Ngz = temp[2]
+        print(Ngz)
+
+        for i in range(0, 5):
+            rr.readline()
+        
+        line = rr.readline()
+        temp = np.array(line.split(), dtype=float)
+        Dx = temp[0]
+        Dy = temp[1]
+        Dz = temp[2]
+        print(Dx, Dy, Dz)
+
+        for i in range(0, 5):
+            rr.readline()
+        
+        line = rr.readline()
+        temp = np.array(line.split(), dtype=float)
+        Pi = temp[0]
+        Swi = temp[1]
+        print(Swi)
+
+        for i in range(0, 6):
+            rr.readline()
+        
+        line = rr.readline()
+        temp = np.array(line.split(), dtype=float)
+        phi_ref = temp[0]
+        cr = temp[1]
+        p_ref = temp[2]
+        print(p_ref)
+
+        for i in range(0, 5):
+            rr.readline()
+        
+        line = rr.readline()
+        temp = np.array(line.split(), dtype=float)
+        kx = temp[0]
+        ky = temp[1]
+        kz = temp[2]
+        print(kx, ky, kz)
+
+        for i in range(0, 4):
+            rr.readline()
+        
+        nrock = int(rr.readline())
+        print(nrock)
+        Sw = np.zeros(nrock, dtype=float)
+        Krw = np.zeros(nrock, dtype=float)
+        Kro = np.zeros(nrock, dtype=float)
+        Pcow = np.zeros(nrock, dtype=float)
+        # print(Sw)
+
+        for i in range(0, 6):
+            rr.readline()
+
+        for i in range(0, nrock):
+            line = rr.readline()
+            temp = np.array(line.split(), dtype=float)
+            Sw[i] = temp[0]
+            Krw[i] = temp[1]
+            Kro[i] = temp[2]
+            Pcow[i] = temp[3]
+            print(Sw[i], Krw[i], Kro[i], Pcow[i])
+        
+        for i in range(0, 5):
+            rr.readline()
+        
+        line = rr.readline()
+        temp = np.array(line.split(), dtype=float)
+        ros = temp[0]
+        rgs = temp[1]
+        rws = temp[2]
+        print(ros, rgs, rws)
+
+        for i in range(0, 26):
+            rr.readline()
+        
+        Pg = np.zeros(11, dtype=float)
+        Bg = np.zeros(11, dtype=float)
+        Mug = np.zeros(11, dtype=float)
+
+        for i in range(0, 11):
+            line = rr.readline()
+            temp = np.array(line.split(), dtype=float)
+            Pg[i] = temp[0]
+            Bg[i] = temp[1]
+            Mug[i] = temp[2]
+            print(Pg[i], Bg[i], Mug[i])
+        
+        for i in range(0, 13):
+            rr.readline()
+        
+        global Nw, wlx, wly, wlz, wrv, wr
+        Nw = int(rr.readline()) # numOfWell
+        wlx = np.zeros(Nw, dtype=int)
+        wly = np.zeros(Nw, dtype=int)
+        wlz = np.zeros(Nw, dtype=int)
+
+        for i in range(0, 4):
+            rr.readline()
+        
+        for i in range(0, Nw):
+            line = rr.readline()
+            temp = np.array(line.split(), dtype=int)
+            wlx[i] = temp[0]-1
+            wly[i] = temp[1]-1
+            wlz[i] = temp[2]-1
+            print(wlx[i], wly[i], wlz[i])
+        
+        for i in range(0, 4):
+            rr.readline()
+        
+        wrv = np.zeros(Nw, dtype=int)
+        for i in range(0, Nw):
+            wrv[i] = int(rr.readline())
+        
+        for i in range(0, 3):
+            rr.readline()
+        
+        wr = np.zeros((Nw, np.amax(wrv), 2), dtype=float)
+        for i in range(0, Nw):
+            rr.readline()
+            for j in range(0, wrv[i]):
+                line = rr.readline()
+                temp = np.array(line.split(), dtype=float)
+                wr[i][j][0] = temp[0] #time
+                wr[i][j][1] = temp[1] #rate
+                print(wr[i][j][0], wr[i][j][1])
+
+        return
 
 def interpolate(tabx, taby, x):
     i = 0
@@ -111,149 +255,7 @@ def fdRs(p):
     dydx = (y1-y2)/(p-p2)
     return dydx
 
-def readSim():
-    global Ngx, Ngy, Ngz, Dx, Dy, Dz, Pi, Swi
-    global phi_ref, cr, p_ref, kx, ky, kz, nrock
-    global Sw, Krw, Kro, Pcow, ros, rgs, rws, Pg, Bg, Mug
-    with open("datasim.txt", "r") as rr:
-        for i in range(0, 5):
-            rr.readline()
-        
-        line = rr.readline()
-        temp = np.array(line.split(), dtype=int)
-        Ngx = temp[0]
-        Ngy = temp[1]
-        Ngz = temp[2]
-        # print(Ngz)
 
-        for i in range(0, 5):
-            rr.readline()
-        
-        line = rr.readline()
-        temp = np.array(line.split(), dtype=float)
-        Dx = temp[0]
-        Dy = temp[1]
-        Dz = temp[2]
-        # print(Dx, Dy, Dz)
-
-        for i in range(0, 5):
-            rr.readline()
-        
-        line = rr.readline()
-        temp = np.array(line.split(), dtype=float)
-        Pi = temp[0]
-        Swi = temp[1]
-        # print(Swi)
-
-        for i in range(0, 6):
-            rr.readline()
-        
-        line = rr.readline()
-        temp = np.array(line.split(), dtype=float)
-        phi_ref = temp[0]
-        cr = temp[1]
-        p_ref = temp[2]
-        # print(p_ref)
-
-        for i in range(0, 5):
-            rr.readline()
-        
-        line = rr.readline()
-        temp = np.array(line.split(), dtype=float)
-        kx = temp[0]
-        ky = temp[1]
-        kz = temp[2]
-        # print(kx, ky, kz)
-
-        for i in range(0, 4):
-            rr.readline()
-        
-        nrock = int(rr.readline())
-        # print(nrock)
-        Sw = np.zeros(nrock, dtype=float)
-        Krw = np.zeros(nrock, dtype=float)
-        Kro = np.zeros(nrock, dtype=float)
-        Pcow = np.zeros(nrock, dtype=float)
-        # print(Sw)
-
-        for i in range(0, 6):
-            rr.readline()
-
-        for i in range(0, nrock):
-            line = rr.readline()
-            temp = np.array(line.split(), dtype=float)
-            Sw[i] = temp[0]
-            Krw[i] = temp[1]
-            Kro[i] = temp[2]
-            Pcow[i] = temp[3]
-            # print(Sw[i], Krw[i], Kro[i], Pcow[i])
-        
-        for i in range(0, 5):
-            rr.readline()
-        
-        line = rr.readline()
-        temp = np.array(line.split(), dtype=float)
-        ros = temp[0]
-        rgs = temp[1]
-        rws = temp[2]
-        # print(ros, rgs, rws)
-
-        for i in range(0, 26):
-            rr.readline()
-        
-        Pg = np.zeros(11, dtype=float)
-        Bg = np.zeros(11, dtype=float)
-        Mug = np.zeros(11, dtype=float)
-
-        for i in range(0, 11):
-            line = rr.readline()
-            temp = np.array(line.split(), dtype=float)
-            Pg[i] = temp[0]
-            Bg[i] = temp[1]
-            Mug[i] = temp[2]
-            # print(Pg[i], Bg[i], Mug[i])
-        
-        for i in range(0, 13):
-            rr.readline()
-        
-        global Nw, wlx, wly, wlz, wrv, wr
-        Nw = int(rr.readline()) # numOfWell
-        wlx = np.zeros(Nw, dtype=int)
-        wly = np.zeros(Nw, dtype=int)
-        wlz = np.zeros(Nw, dtype=int)
-
-        for i in range(0, 4):
-            rr.readline()
-        
-        for i in range(0, Nw):
-            line = rr.readline()
-            temp = np.array(line.split(), dtype=int)
-            wlx[i] = temp[0]-1
-            wly[i] = temp[1]-1
-            wlz[i] = temp[2]-1
-            # print(wlx[i], wly[i], wlz[i])
-        
-        for i in range(0, 4):
-            rr.readline()
-        
-        wrv = np.zeros(Nw, dtype=int)
-        for i in range(0, Nw):
-            wrv[i] = int(rr.readline())
-        
-        for i in range(0, 3):
-            rr.readline()
-        
-        wr = np.zeros((Nw, np.amax(wrv), 2), dtype=float)
-        for i in range(0, Nw):
-            rr.readline()
-            for j in range(0, wrv[i]):
-                line = rr.readline()
-                temp = np.array(line.split(), dtype=float)
-                wr[i][j][0] = temp[0] #time
-                wr[i][j][1] = temp[1] #rate
-                # print(wr[i][j][0], wr[i][j][1])
-
-        return
 
 def fBg(p):
     y = interpolate(Pg, Bg, p)*1000*5.6146
@@ -859,17 +861,17 @@ dSLIM = 0.02
 dPLIM = 50
 
 t = 0
-dt = 25
+dt = 2
 tmax = 2000
 cum_oilprod = 0
 cum_watprod = 0
 cum_watinj = 0
 cum_oilinj = 0
 
-P = np.zeros((Ngx, Ngy, Ngz), dtype=float)
-S = np.zeros((Ngx, Ngy, Ngz), dtype=float)
 while t<tmax:
-
+    P = np.zeros((Ngx, Ngy, Ngz), dtype=float)
+    S = np.zeros((Ngx, Ngy, Ngz), dtype=float)
+    
     t = t + dt
     for k in range(0, Ngz):
         for j in range(0, Ngy):
@@ -929,27 +931,21 @@ while t<tmax:
                     Sw3d[i][j][k] = Sw3d[i][j][k]+x_dsw[i][j][k]
                     Pg3d[i][j][k] = Pg3d[i][j][k]+x_dp[i][j][k]
         x_dsw_max = np.amax(abs(x_dsw))
-        print("max dsw: ", x_dsw_max)
         x_dp_max = np.amax(abs(x_dp))
-        print("max dp: ", x_dp_max)
-        # fo_max = np.amax(abs(Fo))
-        # fw_max = np.amax(abs(Fw))
-        # x_dsw_max = abs(np.amax(x_dsw))
-        # x_dp_max = abs(np.amax(x_dp))
-        # fo_max = abs(np.amax(Fo))
-        # fw_max = abs(np.amax(Fw))
+        fo_max = np.amax(abs(Fo))
+        fw_max = np.amax(abs(Fw))
 
-        # if(fo_max<E_fo and fw_max<E_fw and x_dp_max<E_p and x_dsw_max):
+        # if(x_dp_max<E_p and x_dsw_max<E_s):
         #     c = 1
-        if(x_dp_max<E_p and x_dsw_max<E_s):
+        if(fo_max<E_fo and fw_max<E_fw and x_dp_max<E_p and x_dsw_max<E_s):
             c = 1
         else:
             if(niter>itermax):
                 # t = tmax
                 dt = dt*0.5
                 t=t-dt
-            if dt<10**-6:
-                t = tmax
+            # if dt<10**-6:
+            #     t = tmax
     
     print("Subprogram:Calc_Rem/running")
     calc_rem()
@@ -960,12 +956,16 @@ while t<tmax:
         if qw[i]>0:
             Qw = qw[i]
             Qo = qo[i]
-            cum_watprod += Qw*dt/5.6146
-            cum_oilprod += Qo*dt/5.6146
+            cum_watprod += Qw*dt
+            # cum_watprod += Qw*dt/5.6146
+            cum_oilprod += Qo*dt
+            # cum_oilprod += Qo*dt/5.6146
         if qw[i]<0:
             Qi = abs(qw[i])
-            cum_watinj += abs(qw[i])*dt/5.6146
-            cum_oilinj += abs(qo[i])*dt/5.6146
+            cum_watinj += abs(qw[i])*dt
+            # cum_watinj += abs(qw[i])*dt/5.6146
+            cum_oilinj += abs(qo[i])*dt
+            # cum_oilinj += abs(qo[i])*dt/5.6146
 
     mbew = (owip-rwip-cum_watprod+cum_watinj)/owip
     mbeo = (ooip-roip-cum_oilprod+cum_oilinj)/owip
@@ -975,14 +975,14 @@ while t<tmax:
 
     aTIME.append(t)
     aDT.append(dt)
-    aWATINJ.append(Qi/5.6146)
-    aOILPROD.append(Qo/5.6146)
-    aWATPROD.append(Qw/5.6146)
+    aWATINJ.append(Qi)
+    aOILPROD.append(Qo)
+    aWATPROD.append(Qw)
     aWC.append(watcut)
     aWOR.append(wor)
-    aCUMINJ.append(cum_watinj)
-    aCUMOPROD.append(cum_oilprod)
-    aCUMWPROD.append(cum_watprod)
+    aCUMINJ.append(cum_watinj/1000)
+    aCUMOPROD.append(cum_oilprod/1000)
+    aCUMWPROD.append(cum_watprod/1000)
     aPWBINJ.append(Pg3d[0][0][4])
     aPWBPROD.append(Pg3d[4][4][4])
     aMB_ERR_OIL.append(mbeo)
@@ -1001,25 +1001,6 @@ while t<tmax:
         dt = 30
     if(t<tmax and t+dt>tmax):
         dt = tmax - t
-
-    # print("TIME DT WATINJ OILPROD WATPROD WC WOR CUMINJ CUMOPROD CUMWPROD PWBINJ PWBPROD MBEO MBEW")
-    # print("Days Days STB/D STB/D STB/D % STB/STB STB STB STB psia psia dec. dec.")
-    # for x in range(0, len(aTIME)):
-    #     print(aTIME[x], " ", end="")
-    #     print(aDT[x], " ", end="")
-    #     print(aWATINJ[x], " ", end="")
-    #     print(aOILPROD[x], " ", end="")
-    #     print(aWATPROD[x], " ", end="")
-    #     print(aWC[x], " ", end="")
-    #     print(aWOR[x], " ", end="")
-    #     print(aCUMINJ[x], " ", end="")
-    #     print(aCUMOPROD[x], " ", end="")
-    #     print(aCUMWPROD[x], " ", end="")
-    #     print(aPWBINJ[x], " ", end="")
-    #     print(aPWBPROD[x], " ", end="")
-    #     print(aMB_ERR_OIL[x], " ", end="")
-    #     print(aMB_ERR_WAT[x], " ", end="")
-    #     print("")
 
 with open("resultsim.txt", "w+") as ww:
     ww.write("TIME DT WATINJ OILPROD WATPROD WC WOR CUMINJ CUMOPROD CUMWPROD PWBINJ PWBPROD MBEO MBEW")
@@ -1042,3 +1023,5 @@ with open("resultsim.txt", "w+") as ww:
         ww.write(str(aMB_ERR_OIL[x])+ " ")
         ww.write(str(aMB_ERR_WAT[x])+ " ")
         ww.write("\n")
+
+print("Simulation Run Completed")
