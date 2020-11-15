@@ -10,7 +10,6 @@ def readpvt():
             rd.readline()
         
         npvto = int(rd.readline())
-        print(npvto)
 
         for i in range(0, 4):
             rd.readline()
@@ -27,7 +26,6 @@ def readpvt():
             Pfl[i] = temp[1]
             Bo[i] = temp[2]
             Muo[i] = temp[3]
-            print(Rs[i], Pfl[i], Bo[i], Muo[i])
         
         for i in range(0, 4):
             rd.readline()
@@ -39,7 +37,6 @@ def readpvt():
         Cw = temp[2]
         Muw_ref = temp[3]
         Vscw = temp[4]
-        print(Vscw)
     return
 
 def readSim():
@@ -55,7 +52,6 @@ def readSim():
         Ngx = temp[0]
         Ngy = temp[1]
         Ngz = temp[2]
-        print(Ngz)
 
         for i in range(0, 5):
             rr.readline()
@@ -65,7 +61,6 @@ def readSim():
         Dx = temp[0]
         Dy = temp[1]
         Dz = temp[2]
-        print(Dx, Dy, Dz)
 
         for i in range(0, 5):
             rr.readline()
@@ -74,7 +69,6 @@ def readSim():
         temp = np.array(line.split(), dtype=float)
         Pi = temp[0]
         Swi = temp[1]
-        print(Swi)
 
         for i in range(0, 6):
             rr.readline()
@@ -84,7 +78,6 @@ def readSim():
         phi_ref = temp[0]
         cr = temp[1]
         p_ref = temp[2]
-        print(p_ref)
 
         for i in range(0, 5):
             rr.readline()
@@ -94,18 +87,15 @@ def readSim():
         kx = temp[0]
         ky = temp[1]
         kz = temp[2]
-        print(kx, ky, kz)
 
         for i in range(0, 4):
             rr.readline()
         
         nrock = int(rr.readline())
-        print(nrock)
         Sw = np.zeros(nrock, dtype=float)
         Krw = np.zeros(nrock, dtype=float)
         Kro = np.zeros(nrock, dtype=float)
         Pcow = np.zeros(nrock, dtype=float)
-        # print(Sw)
 
         for i in range(0, 6):
             rr.readline()
@@ -117,7 +107,6 @@ def readSim():
             Krw[i] = temp[1]
             Kro[i] = temp[2]
             Pcow[i] = temp[3]
-            print(Sw[i], Krw[i], Kro[i], Pcow[i])
         
         for i in range(0, 5):
             rr.readline()
@@ -127,7 +116,6 @@ def readSim():
         ros = temp[0]
         rgs = temp[1]
         rws = temp[2]
-        print(ros, rgs, rws)
 
         for i in range(0, 26):
             rr.readline()
@@ -142,7 +130,6 @@ def readSim():
             Pg[i] = temp[0]
             Bg[i] = temp[1]
             Mug[i] = temp[2]
-            print(Pg[i], Bg[i], Mug[i])
         
         for i in range(0, 13):
             rr.readline()
@@ -162,7 +149,6 @@ def readSim():
             wlx[i] = temp[0]-1
             wly[i] = temp[1]-1
             wlz[i] = temp[2]-1
-            print(wlx[i], wly[i], wlz[i])
         
         for i in range(0, 4):
             rr.readline()
@@ -182,7 +168,6 @@ def readSim():
                 temp = np.array(line.split(), dtype=float)
                 wr[i][j][0] = temp[0] #time
                 wr[i][j][1] = temp[1] #rate
-                print(wr[i][j][0], wr[i][j][1])
 
         return
 

@@ -14,11 +14,10 @@ def readpvt():
             rd.readline()
         
         npvto = int(rd.readline())
-        # print(npvto)
 
         for i in range(0, 4):
             rd.readline()
-        
+
         Rs = np.zeros(npvto, dtype=float)
         Pfl = np.zeros(npvto, dtype=float)
         Bo = np.zeros(npvto, dtype=float)
