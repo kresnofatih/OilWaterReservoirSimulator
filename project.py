@@ -255,8 +255,6 @@ def fdRs(p):
     dydx = (y1-y2)/(p-p2)
     return dydx
 
-
-
 def fBg(p):
     y = interpolate(Pg, Bg, p)*1000*5.6146
     return y
