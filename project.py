@@ -240,6 +240,8 @@ def fdRs(p):
     dydx = (y1-y2)/(p-p2)
     return dydx
 
+
+
 def fBg(p):
     y = interpolate(Pg, Bg, p)*1000*5.6146
     return y
@@ -985,7 +987,7 @@ while t<tmax:
     if(t<tmax and t+dt>tmax):
         dt = tmax - t
 
-with open("resultsim.txt", "w+") as ww:
+with open("resultsim2.txt", "w+") as ww:
     ww.write("TIME DT WATINJ OILPROD WATPROD WC WOR CUMINJ CUMOPROD CUMWPROD PWBINJ PWBPROD MBEO MBEW")
     ww.write("\n")
     ww.write("Days Days STB/D STB/D STB/D % STB/STB STB STB STB psia psia dec. dec.")

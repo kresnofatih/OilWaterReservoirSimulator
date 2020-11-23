@@ -30,7 +30,6 @@ def readpvt():
             Pfl[i] = temp[1]
             Bo[i] = temp[2]
             Muo[i] = temp[3]
-            # print(Rs[i], Pfl[i], Bo[i], Muo[i])
         
         for i in range(0, 4):
             rd.readline()
@@ -57,7 +56,6 @@ def readSim():
         Ngx = temp[0]
         Ngy = temp[1]
         Ngz = temp[2]
-        # print(Ngz)
 
         for i in range(0, 5):
             rr.readline()
@@ -67,7 +65,6 @@ def readSim():
         Dx = temp[0]
         Dy = temp[1]
         Dz = temp[2]
-        # print(Dx, Dy, Dz)
 
         for i in range(0, 5):
             rr.readline()
@@ -76,7 +73,6 @@ def readSim():
         temp = np.array(line.split(), dtype=float)
         Pi = temp[0]
         Swi = temp[1]
-        # print(Swi)
 
         for i in range(0, 6):
             rr.readline()
@@ -86,7 +82,6 @@ def readSim():
         phi_ref = temp[0]
         cr = temp[1]
         p_ref = temp[2]
-        # print(p_ref)
 
         for i in range(0, 5):
             rr.readline()
@@ -96,18 +91,15 @@ def readSim():
         kx = temp[0]
         ky = temp[1]
         kz = temp[2]
-        # print(kx, ky, kz)
 
         for i in range(0, 4):
             rr.readline()
         
         nrock = int(rr.readline())
-        # print(nrock)
         Sw = np.zeros(nrock, dtype=float)
         Krw = np.zeros(nrock, dtype=float)
         Kro = np.zeros(nrock, dtype=float)
         Pcow = np.zeros(nrock, dtype=float)
-        # print(Sw)
 
         for i in range(0, 6):
             rr.readline()
@@ -119,7 +111,6 @@ def readSim():
             Krw[i] = temp[1]
             Kro[i] = temp[2]
             Pcow[i] = temp[3]
-            # print(Sw[i], Krw[i], Kro[i], Pcow[i])
         
         for i in range(0, 5):
             rr.readline()
@@ -129,9 +120,8 @@ def readSim():
         ros = temp[0]
         rgs = temp[1]
         rws = temp[2]
-        # print(ros, rgs, rws)
 
-        for i in range(0, 26):
+        for i in range(0, 34):
             rr.readline()
         
         Pg = np.zeros(21, dtype=float)
@@ -144,14 +134,12 @@ def readSim():
             Pg[i] = temp[0]
             Bg[i] = temp[1]
             Mug[i] = temp[2]
-            # print(Pg[i], Bg[i], Mug[i])
         
         for i in range(0, 13):
             rr.readline()
         
         global Nw, wlx, wly, wlz, wrv, wr
         Nw = int(rr.readline()) # numOfWell
-        # print(Nw)
         wlx = np.zeros(Nw, dtype=int)
         wly = np.zeros(Nw, dtype=int)
         wlz = np.zeros(Nw, dtype=int)
@@ -165,7 +153,6 @@ def readSim():
             wlx[i] = temp[0]-1
             wly[i] = temp[1]-1
             wlz[i] = temp[2]-1
-            # print(wlx[i], wly[i], wlz[i])
         
         for i in range(0, 4):
             rr.readline()
@@ -173,7 +160,6 @@ def readSim():
         wrv = np.zeros(Nw, dtype=int)
         for i in range(0, Nw):
             wrv[i] = int(rr.readline())
-            # print(wrv[i])
         
         for i in range(0, 3):
             rr.readline()
@@ -186,7 +172,6 @@ def readSim():
                 temp = np.array(line.split(), dtype=float)
                 wr[i][j][0] = temp[0] #time
                 wr[i][j][1] = temp[1] #rate
-                # print(wr[i][j][0], wr[i][j][1])
 
         return
 
@@ -820,6 +805,61 @@ def jm_constructor():
     #                     ww.write("\n")
     return
 
+def jm_constructor2(Ngx, Ngy, Ngz, Ja, Jb, Jc, Jd, Je, Jf, Jg, Fo, Fw):
+    global jm, jmm
+    jm = np.zeros((Ngx*Ngy*Ngz*2, 2*Ngx*Ngy*Ngz), dtype=float)
+    n = 0
+    for k in range(0, Ngz):
+        for j in range(0, Ngy):
+            for i in range(0, Ngx):
+                # 2-Rows per grid
+                for h in range(0, 2):   # h={0,1}
+                    # 7 Derivate Members
+                    for m in range(0, 7):
+                        # if(jp[i][j][k][m]!=-1):
+                        for mm in range(0, 2):
+                            if(m==0 and jp[i][j][k][m]!=-1):   # A
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 1111
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Ja[i][j][k][h * 2+mm]
+                            elif(m==1 and jp[i][j][k][m]!=-1): # F
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 6666
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jf[i][j][k][h * 2+mm]
+                            elif(m==2 and jp[i][j][k][m]!=-1): # D
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 4444
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jd[i][j][k][h * 2+mm]
+                            elif(m==3 and jp[i][j][k][m]!=-1): # B
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 2222
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jb[i][j][k][h * 2+mm]
+                            elif(m==4 and jp[i][j][k][m]!=-1): # C
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 3333
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jc[i][j][k][h * 2+mm]
+                            elif(m==5 and jp[i][j][k][m]!=-1): # E
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 5555
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Je[i][j][k][h * 2+mm]
+                            elif(m==6 and jp[i][j][k][m]!=-1):  # G
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 7777
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jg[i][j][k][h * 2+mm]
+                    n+=1
+    nrow = 0
+    jmm = np.zeros(2*Ngx*Ngy*Ngz, dtype=float)
+    for k in range(0, Ngz):
+        for j in range(0, Ngy):
+            for i in range(0, Ngx):
+                jmm[nrow] = -Fo[i][j][k]
+                nrow+=1
+                jmm[nrow] = -Fw[i][j][k]
+                nrow+=1
+    # if nnn == 1:
+    #     with open("jcb.txt", "w+") as ww:
+    #         for r in range(0, 2*Ngx*Ngy*Ngz):
+    #             for c in range(0, 2*Ngx*Ngy*Ngz):
+    #                 if(c!=2*Ngx*Ngy*Ngz-1):
+    #                     ww.write(str(jm[r][c])+" ")
+    #                 else:
+    #                     ww.write(str(jm[r][c]))
+    #                     ww.write("\n")
+    return
+
 # Main Program
 
 # Collecting Arrays
@@ -865,7 +905,7 @@ dSLIM = 0.02
 dPLIM = 50
 
 t = 0
-dt = 2
+dt = 3
 tmax = 2000
 cum_oilprod = 0
 cum_watprod = 0
@@ -904,7 +944,8 @@ while t<tmax:
         print("")
 
         print("Subprogram:jm_creator/running")
-        jm_constructor()
+        # jm_constructor()
+        jm_constructor2(Ngx, Ngy, Ngz, Ja, Jb, Jc, Jd, Je, Jf, Jg, Fo, Fw)
         print("Subprogram:jm_creator/success")
         print("")
 
