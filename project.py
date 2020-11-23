@@ -1,7 +1,11 @@
+# Oil-Water Reservoir Simulator 2017
+# Name  :   Kresno Fatih Imani
+# NIM   :   12216009
+
 import numpy as np
 # import matplotlib.pyplot as plt
 from scipy.linalg import lu_solve, lu_factor
-# from scipy.linalg import solve
+from scipy.linalg import solve
 
 def readpvt():
     global npvto, Rs, Pfl, Bo, Muo, Pw_ref, Bw_ref, Cw, Muw_ref, Vscw
@@ -801,6 +805,61 @@ def jm_constructor():
     #                     ww.write("\n")
     return
 
+def jm_constructor2(Ngx, Ngy, Ngz, Ja, Jb, Jc, Jd, Je, Jf, Jg, Fo, Fw):
+    global jm, jmm
+    jm = np.zeros((Ngx*Ngy*Ngz*2, 2*Ngx*Ngy*Ngz), dtype=float)
+    n = 0
+    for k in range(0, Ngz):
+        for j in range(0, Ngy):
+            for i in range(0, Ngx):
+                # 2-Rows per grid
+                for h in range(0, 2):   # h={0,1}
+                    # 7 Derivate Members
+                    for m in range(0, 7):
+                        # if(jp[i][j][k][m]!=-1):
+                        for mm in range(0, 2):
+                            if(m==0 and jp[i][j][k][m]!=-1):   # A
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 1111
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Ja[i][j][k][h * 2+mm]
+                            elif(m==1 and jp[i][j][k][m]!=-1): # F
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 6666
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jf[i][j][k][h * 2+mm]
+                            elif(m==2 and jp[i][j][k][m]!=-1): # D
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 4444
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jd[i][j][k][h * 2+mm]
+                            elif(m==3 and jp[i][j][k][m]!=-1): # B
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 2222
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jb[i][j][k][h * 2+mm]
+                            elif(m==4 and jp[i][j][k][m]!=-1): # C
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 3333
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jc[i][j][k][h * 2+mm]
+                            elif(m==5 and jp[i][j][k][m]!=-1): # E
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 5555
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Je[i][j][k][h * 2+mm]
+                            elif(m==6 and jp[i][j][k][m]!=-1):  # G
+                                # jm[n][jp[i][j][k][m] * 2 + mm] = 7777
+                                jm[n][jp[i][j][k][m] * 2 + mm] = Jg[i][j][k][h * 2+mm]
+                    n+=1
+    nrow = 0
+    jmm = np.zeros(2*Ngx*Ngy*Ngz, dtype=float)
+    for k in range(0, Ngz):
+        for j in range(0, Ngy):
+            for i in range(0, Ngx):
+                jmm[nrow] = -Fo[i][j][k]
+                nrow+=1
+                jmm[nrow] = -Fw[i][j][k]
+                nrow+=1
+    # if nnn == 1:
+    #     with open("jcb.txt", "w+") as ww:
+    #         for r in range(0, 2*Ngx*Ngy*Ngz):
+    #             for c in range(0, 2*Ngx*Ngy*Ngz):
+    #                 if(c!=2*Ngx*Ngy*Ngz-1):
+    #                     ww.write(str(jm[r][c])+" ")
+    #                 else:
+    #                     ww.write(str(jm[r][c]))
+    #                     ww.write("\n")
+    return
+
 # Main Program
 
 # Collecting Arrays
@@ -819,8 +878,6 @@ aPWBPROD = []
 aMB_ERR_OIL = []
 aMB_ERR_WAT = []
 
-
-
 print("Subprogram:Readdata/running")
 readpvt()
 readSim()
@@ -837,8 +894,8 @@ jm_positioner()
 print("Subprogram:jm_positioner/success")
 print("")
 
-E_s = float(0.001)
-E_p = float(0.1)
+E_s = float(0.001)  # dSw untuk dianggap konvergen
+E_p = float(0.1)    # dP utk dianggap konvergen
 E_fo = float(1)
 E_fw = float(5)
 
@@ -846,7 +903,7 @@ dSLIM = 0.02
 dPLIM = 50
 
 t = 0
-dt = 2
+dt = 3
 tmax = 2000
 cum_oilprod = 0
 cum_watprod = 0
@@ -885,14 +942,15 @@ while t<tmax:
         print("")
 
         print("Subprogram:jm_creator/running")
-        jm_constructor()
+        # jm_constructor()
+        jm_constructor2(Ngx, Ngy, Ngz, Ja, Jb, Jc, Jd, Je, Jf, Jg, Fo, Fw)
         print("Subprogram:jm_creator/success")
         print("")
 
         print("Subprogram:gauss/running")
-        # sol = solve(jm, jmm)
-        lu, piv = lu_factor(jm)
-        sol = lu_solve((lu, piv), jmm)
+        sol = solve(jm, jmm)  # gauss
+        # lu, piv = lu_factor(jm) # LU Decomposition
+        # sol = lu_solve((lu, piv), jmm)
         print("time: ", t)
         print("iter: ", niter)
         print("Subprogram:gauss/success")
@@ -948,7 +1006,7 @@ while t<tmax:
         if qw[i]<0:
             Qi = abs(qw[i])
             cum_watinj += abs(qw[i])*dt
-            # cum_watinj += abs(qw[i])*dt/5.6146
+            # cum_watinj += abs(qw[i])*dt/5.6146 (bbl)
             cum_oilinj += abs(qo[i])*dt
             # cum_oilinj += abs(qo[i])*dt/5.6146
 

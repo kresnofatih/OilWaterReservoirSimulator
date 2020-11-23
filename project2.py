@@ -1,11 +1,11 @@
-# Oil-Water Reservoir Simulator
+# Oil-Water Reservoir Simulator 2014
 # Name  :   Kresno Fatih Imani
 # NIM   :   12216009
 
 import numpy as np
 # import matplotlib.pyplot as plt
 from scipy.linalg import lu_solve, lu_factor
-# from scipy.linalg import solve
+from scipy.linalg import solve
 
 def readpvt():
     global npvto, Rs, Pfl, Bo, Muo, Pw_ref, Bw_ref, Cw, Muw_ref, Vscw
@@ -878,8 +878,6 @@ aPWBPROD = []
 aMB_ERR_OIL = []
 aMB_ERR_WAT = []
 
-
-
 print("Subprogram:Readdata/running")
 readpvt()
 readSim()
@@ -896,8 +894,8 @@ jm_positioner()
 print("Subprogram:jm_positioner/success")
 print("")
 
-E_s = float(0.001)
-E_p = float(0.1)
+E_s = float(0.001)  # dSw untuk dianggap konvergen
+E_p = float(0.1)    # dP utk dianggap konvergen
 E_fo = float(1)
 E_fw = float(5)
 
@@ -950,8 +948,8 @@ while t<tmax:
         print("")
 
         print("Subprogram:gauss/running")
-        # sol = solve(jm, jmm)
-        lu, piv = lu_factor(jm)
+        # sol = solve(jm, jmm)  # gauss
+        lu, piv = lu_factor(jm) # LU Decomposition
         sol = lu_solve((lu, piv), jmm)
         print("time: ", t)
         print("iter: ", niter)
@@ -1008,7 +1006,7 @@ while t<tmax:
         if qw[i]<0:
             Qi = abs(qw[i])
             cum_watinj += abs(qw[i])*dt
-            # cum_watinj += abs(qw[i])*dt/5.6146
+            # cum_watinj += abs(qw[i])*dt/5.6146 (bbl)
             cum_oilinj += abs(qo[i])*dt
             # cum_oilinj += abs(qo[i])*dt/5.6146
 
